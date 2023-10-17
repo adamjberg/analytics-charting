@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Page Views per Day</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div style="width: 80%; margin: 0 auto;">
+        <canvas id="pageViewsChart"></canvas>
+    </div>
+
+    <script>
+        // Sample page views data (replace with your actual data)
+        const pageViewsData = [
+            {
+                event: "page_view",
+                page: "/",
+                date: new Date("2023-10-10T00:00:00"),
+            },
+            {
+                event: "page_view",
+                page: "/",
+                date: new Date("2023-10-11T00:00:00"),
+            },
+            // Add data for the last 7 days here
+        ];
+
+        // Create an object to store page views per day
+        const pageViewsPerDay = {};
+
+        // Iterate through the page views data and count views per day
+        pageViewsData.forEach((view) => {
+            const date = view.date.toDateString();
+            if (pageViewsPerDay[date]) {
+                pageViewsPerDay[date]++;
+            } else {
+                pageViewsPerDay[date] = 1;
+            }
+        });
+
+        // Extract labels (days) and data (page views)
+        const labels = Object.keys(pageViewsPerDay);
+        const data = Object.values(pageViewsPerDay);
+
+        // Calculate the maximum value for the y-axis rounded to the nearest 10
+        const maxPageViews = Math.max(...data);
+        const maxYAxis = Math.floor(maxPageViews / 10) * 10 + 10;
+
+        const ctx = document.getElementById("pageViewsChart").getContext("2d");
+        const pageViewsChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Page Views",
+                    backgroundColor: "rgba(75, 192, 192, 0.2)",
+                    borderColor: "rgba(75, 192, 192, 1)",
+                    borderWidth: 1,
+                    data: data,
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: maxYAxis, // Set the maximum value for the y-axis
+                        stepSize: 10, // Set the step size to 10 to round to the nearest 10
+                        title: {
+                            display: true,
+                            text: "Page Views"
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Days"
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
